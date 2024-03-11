@@ -40,14 +40,18 @@
         Sentry.onLoad(function() {
             Sentry.init({
                 integrations: [
-                    Sentry.replayIntegration({
-                        // No PII in this site
-                        maskAllText: false,
-                        blockAllMedia: false,
-                    }),
+                    // Sentry.replayIntegration({
+                    //     // No PII in this site
+                    //     maskAllText: false,
+                    //     blockAllMedia: false,
+                    // }),
                 ],
                 replaysSessionSampleRate: 1.0,
             });
+            window.sentryTrace = () => {
+                // TODO: need baggage too
+                return Sentry.getCurrentHub().getScope().getTransaction().toTraceparent();
+            };
         });
     </script>
     <script src="_framework/blazor.webassembly.js"></script>

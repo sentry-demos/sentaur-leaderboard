@@ -1,6 +1,7 @@
 using System.IO.Compression;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 using Sentaur.Leaderboard.Web;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -20,7 +21,9 @@ builder.Logging.AddSentry(o =>
 });
 
 builder.Services.AddScoped(sp => new HttpClient(
-    // Sentry tracing integration:
-    new SentryHttpMessageHandler()) { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+    new SentaurHttpMessageHandler(sp.GetRequiredService<IJSRuntime>()))
+{
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+});
 
 await builder.Build().RunAsync();
