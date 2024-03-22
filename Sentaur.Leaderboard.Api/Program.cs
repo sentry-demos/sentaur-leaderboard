@@ -159,9 +159,8 @@ async Task<List<ScoreEntry>> LotteryEntries(LeaderboardContext leaderboardContex
         // Exclude Sentry employees
         .Where(p => !p.Email.EndsWith("@sentry.io"))
         .OrderByDescending(s => s.Score)
-        .GroupBy(s => s.Email)
         // Dedupe (1 entry per player)
-        .Where(g => g.Count() == 1)
+        .GroupBy(s => s.Email)
         // Get the entry with highest score of each player
         .Select(g => g.OrderByDescending(p => p.Score).First())
         .ToListAsync(cancellationToken);
