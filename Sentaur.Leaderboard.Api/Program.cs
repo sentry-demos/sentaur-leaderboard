@@ -10,7 +10,10 @@ using Sentaur.Leaderboard.Api;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Sentry
-builder.WebHost.UseSentry();
+builder.WebHost.UseSentry(o =>
+{
+    o.AddProfilingIntegration(TimeSpan.FromMilliseconds(500));
+});
 
 builder.Services
     .AddEndpointsApiExplorer()
@@ -85,6 +88,16 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(async (context, next) => {
+    context.Response.OnStarting(() => {
+        // Sentry Browser Profiling
+        // https://docs.sentry.io/platforms/javascript/profiling/
+        context.Response.Headers.Append("Document-Policy", "js-profiling");
+        return Task.CompletedTask;
+    });
+    await next();
+});
 
 using (var scope = app.Services.CreateScope())
 {
