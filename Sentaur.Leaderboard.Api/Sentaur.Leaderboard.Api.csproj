@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
+    <PackageReference Include="Sentry.Profiling" Version="5.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
   </ItemGroup>
 
@@ -35,9 +36,13 @@
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <SentryOrg>demo</SentryOrg>
-    <SentryProject>sentaur-survivor-leaderboard-api</SentryProject>
-<!--    <SentryUploadSymbols>true</SentryUploadSymbols>-->
+    <SentryProject>sentaur-survivors-leaderboard</SentryProject>
+    <SentryUploadSymbols>true</SentryUploadSymbols>
+    <SentryCreateRelease>true</SentryCreateRelease>
+    <SentrySetCommits>true</SentrySetCommits>
     <EmbedAllSources>true</EmbedAllSources>
+    <!-- Using EmbedAllSources already so no need to use SentryUploadSources -->
+    <!-- <SentryUploadSources>true</SentryUploadSources> -->
   </PropertyGroup>
 
 </Project>
