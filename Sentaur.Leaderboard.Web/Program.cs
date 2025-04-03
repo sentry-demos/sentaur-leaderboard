@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Sentaur.Leaderboard.Web;
@@ -7,16 +6,12 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Blazor built-in integration is in a Draft: https://github.com/getsentry/sentry-dotnet/pull/2569/
-builder.Logging.AddSentry(o =>
+builder.UseSentry(o =>
 {
-    o.Dsn = "https://8f3ccd6a8a8e5ba417de8df962236a7d@o87286.ingest.us.sentry.io/4506888120107008";
-    o.EnableTracing = true;
-
-    // System.PlatformNotSupportedException: System.Diagnostics.Process is not supported on this platform.
-    o.DetectStartupTime = StartupTimeDetectionMode.Fast;
-    // Warning: No response compression supported by HttpClientHandler.
-    o.RequestBodyCompressionLevel = CompressionLevel.NoCompression;
+    o.Dsn = "https://de39606043c0b0a7482ebd54f060871f@o87286.ingest.us.sentry.io/4508985365037056";
+    o.TracesSampleRate = 1.0;
+    o.Release = "1.0.25";
+    o.Debug = true;
 });
 
 builder.Services.AddScoped(sp => new HttpClient(

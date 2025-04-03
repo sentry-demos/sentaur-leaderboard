@@ -32,24 +32,30 @@
       <a href="" class="reload">Reload</a>
       <a class="dismiss">🗙</a>
     </div>
-    <script
-            src="https://js.sentry-cdn.com/8f3ccd6a8a8e5ba417de8df962236a7d.min.js"
-            crossorigin="anonymous"
-    ></script>
     <script>
-        Sentry.onLoad(function() {
-            Sentry.init({
-                integrations: [
-                    Sentry.replayIntegration({
-                        // No PII in this site
-                        maskAllText: false,
-                        blockAllMedia: false,
-                    }),
-                ],
-                replaysSessionSampleRate: 1.0,
-            });
+      window.sentryOnLoad = function () {
+        Sentry.init({
+          release: "1.0.25",
+          environment: "production",
+          debug: true,
+          replaysSessionSampleRate: 1.0,
+          profilesSampleRate: 1.0,
+          tracesSampleRate: 1.0,
+          tracePropagationTargets: ["localhost", /^https:\/\/sentaur-survivor\.com\//],
+          integrations: [
+            // Add browser profiling integration to the list of integrations
+            Sentry.browserTracingIntegration(),
+            Sentry.browserProfilingIntegration(),
+            Sentry.replayIntegration({
+              // No PII in this site
+              maskAllText: false,
+              blockAllMedia: false,
+            }),
+          ],
         });
+      };
     </script>
+    <script src="https://js.sentry-cdn.com/de39606043c0b0a7482ebd54f060871f.min.js" crossorigin="anonymous"></script>
     <script src="_framework/blazor.webassembly.js"></script>
   </body>
 </html>
