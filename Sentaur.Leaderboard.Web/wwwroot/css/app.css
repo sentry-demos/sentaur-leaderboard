@@ -200,7 +200,7 @@ p.notice span::before {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 1.5rem;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 /* =========================================
@@ -892,7 +892,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.15rem 1rem;
+    padding: 1rem 1rem;
     flex-shrink: 0;
 }
 
@@ -1000,6 +1000,10 @@ footer img {
    Latest View — column widths & scroll
    ========================================= */
 
+.latest-view {
+    overflow-y: auto;
+}
+
 .latest-view thead th:nth-child(1) {
     text-align: left;
     width: 25%;
@@ -1015,9 +1019,4 @@ footer img {
 
 .latest-view thead th:nth-child(4) {
     width: 25%;
-}
-
-.latest-scroll-container {
-    overflow-y: auto;
-    max-height: calc(100vh - 14rem);
 }

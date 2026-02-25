@@ -5,6 +5,13 @@
 
 <PageTitle>Latest Scores</PageTitle>
 
+<style>
+    .latest-view {
+        max-height: calc(100vh - 280px) !important;
+        overflow-y: auto !important;
+    }
+</style>
+
 <div class="leaderboard latest-view">
 @if (scores == null)
 {
@@ -32,32 +39,30 @@
 }
 else
 {
-    <div class="latest-scroll-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Score</th>
-                    <th>Time</th>
-                    <th>Recorded</th>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Recorded</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var rowIndex = 0; }
+            @foreach (var score in scores)
+            {
+                var isNew = _newKeys.ContainsKey(score.Key);
+                <tr @key="score.Key" class="@(isNew ? "score-new" : "")" style="--i: @rowIndex">
+                    <td class="name-cell">@score.Name</td>
+                    <td class="score-cell">@score.Score.ToString("N0")</td>
+                    <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
+                    <td class="recorded-cell text-muted-custom">@FormatRelativeTime(score.Timestamp)</td>
                 </tr>
-            </thead>
-            <tbody>
-                @{ var rowIndex = 0; }
-                @foreach (var score in scores)
-                {
-                    var isNew = _newKeys.ContainsKey(score.Key);
-                    <tr @key="score.Key" class="@(isNew ? "score-new" : "")" style="--i: @rowIndex">
-                        <td class="name-cell">@score.Name</td>
-                        <td class="score-cell">@score.Score.ToString("N0")</td>
-                        <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
-                        <td class="recorded-cell text-muted-custom">@FormatRelativeTime(score.Timestamp)</td>
-                    </tr>
-                    rowIndex++;
-                }
-            </tbody>
-        </table>
-    </div>
+                rowIndex++;
+            }
+        </tbody>
+    </table>
 }
 </div>
 

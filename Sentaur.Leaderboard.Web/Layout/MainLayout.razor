@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+@inject NavigationManager Nav
 <div class="layout">
     <div class="particles">
         <div class="particle"></div>
@@ -19,7 +20,7 @@
         <img class="header-bg" src="/img/header-wide.webp" alt="" />
         <div class="header-overlay">
             <h1><span>Sentaur Survivors</span></h1>
-            <p class="tagline">Highscores</p>
+            <p class="tagline">@(Nav.Uri.Contains("/latest") ? "Latest" : "Highscores")</p>
         </div>
     </header>
     <div class="page">
