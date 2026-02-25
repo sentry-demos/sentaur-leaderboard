@@ -107,7 +107,17 @@ header {
     position: relative;
     max-height: 30vh;
     overflow: hidden;
+    -webkit-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+header *::selection {
+    background: transparent;
+}
+
+header *:focus {
+    outline: none;
 }
 
 .header-bg {
