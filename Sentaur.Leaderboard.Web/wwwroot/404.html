@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sentaur.Leaderboard.Web</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" href="favicon.ico" />
+    <link href="Sentaur.Leaderboard.Web.styles.css" rel="stylesheet" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div id="app">
+      <svg class="loading-progress">
+        <circle r="40%" cx="50%" cy="50%" />
+        <circle r="40%" cx="50%" cy="50%" />
+      </svg>
+      <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+      An unhandled error has occurred.
+      <a href="" class="reload">Reload</a>
+      <a class="dismiss">🗙</a>
+    </div>
+    <script>
+      window.sentryOnLoad = function () {
+        Sentry.init({
+          release: "1.0.25",
+          environment: "production",
+          debug: true,
+          replaysSessionSampleRate: 1.0,
+          profilesSampleRate: 1.0,
+          tracesSampleRate: 1.0,
+          tracePropagationTargets: ["localhost", /^https:\/\/sentaur-survivor\.com\//],
+          integrations: [
+            // Add browser profiling integration to the list of integrations
+            Sentry.browserTracingIntegration(),
+            Sentry.browserProfilingIntegration(),
+            Sentry.replayIntegration({
+              // No PII in this site
+              maskAllText: false,
+              blockAllMedia: false,
+            }),
+          ],
+        });
+      };
+    </script>
+    <script src="https://js.sentry-cdn.com/de39606043c0b0a7482ebd54f060871f.min.js" crossorigin="anonymous"></script>
+    <script>
+      window.leaderboard = {
+        getPageSize: function () {
+          var lb = document.querySelector('.leaderboard');
+          var thead = document.querySelector('.leaderboard thead');
+          if (!lb) return [5, 5];
+          // Calculate available space from viewport minus other elements
+          var header = document.querySelector('header');
+          var footer = document.querySelector('footer');
+          var content = document.querySelector('.content');
+          var contentStyle = content ? getComputedStyle(content) : null;
+          var contentPadding = contentStyle ? parseFloat(contentStyle.paddingTop) + parseFloat(contentStyle.paddingBottom) : 0;
+          var lbStyle = getComputedStyle(lb);
+          var lbPaddingV = parseFloat(lbStyle.paddingTop) + parseFloat(lbStyle.paddingBottom);
+          var lbBorderV = parseFloat(lbStyle.borderTopWidth) + parseFloat(lbStyle.borderBottomWidth);
+          var usedH = (header ? header.offsetHeight : 0)
+                    + (footer ? footer.offsetHeight : 0)
+                    + contentPadding + lbPaddingV + lbBorderV;
+          var available = window.innerHeight - usedH - (thead ? thead.offsetHeight : 0);
+          var rows = lb.querySelectorAll('tbody tr');
+          if (rows.length === 0) return [5, 5];
+          var podiumH = 0, podiumCount = 0, regularTotal = 0, regularCount = 0;
+          rows.forEach(function (r) {
+            var h = r.offsetHeight;
+            if (r.classList.contains('rank-gold') || r.classList.contains('rank-silver') || r.classList.contains('rank-bronze')) {
+              podiumH += h;
+              podiumCount++;
+            } else {
+              regularTotal += h;
+              regularCount++;
+            }
+          });
+          var regularH = regularCount > 0 ? regularTotal / regularCount : 50;
+          if (regularH < 20) regularH = 50;
+          // page 1: podium rows + regular rows that fit in remaining space
+          var firstRegular = Math.max(0, Math.floor((available - podiumH) / regularH));
+          var firstPageSize = Math.max(1, podiumCount + firstRegular);
+          // other pages: podium rows total exactly 4× regular height, so +1 row fits
+          var otherPageSize = firstPageSize + 1;
+          return [firstPageSize, otherPageSize];
+        }
+      };
+    </script>
+    <script src="_framework/blazor.webassembly.js"></script>
+  </body>
+</html>
