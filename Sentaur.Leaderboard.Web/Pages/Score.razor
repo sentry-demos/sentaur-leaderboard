@@ -1,51 +1,212 @@
-﻿@page "/"
+@page "/"
+@implements IDisposable
 @inject HttpClient Http
+@inject IJSRuntime JS
+@inject IConfiguration Configuration
 
 <PageTitle>Leaderboard</PageTitle>
 
-<h1><span>Sentaur Survivors • Scores</span></h1>
-
+<div class="leaderboard">
 @if (scores == null)
 {
-    <p>
-    <em>Loading...</em>
-</p>
-}
-else
-{
-    <table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Score</th>
-            <th>Time</th>
-            <th>Recorded</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var score in scores)
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Recorded</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < 8; i++)
             {
-                <tr>
-                    <td>@score.Name</td>
-                    <td>@score.Score</td>
-                    <td>@score.Duration.ToString(@"mm\:ss")</td>
-                    <td>@score.Timestamp.ToLocalTime().ToString("dddd, h:mm tt")</td>
+                <tr class="skeleton-row">
+                    <td><div class="skeleton-block skeleton-rank"></div></td>
+                    <td><div class="skeleton-block skeleton-name"></div></td>
+                    <td><div class="skeleton-block skeleton-score"></div></td>
+                    <td><div class="skeleton-block skeleton-time"></div></td>
+                    <td><div class="skeleton-block skeleton-recorded"></div></td>
                 </tr>
             }
         </tbody>
     </table>
 }
+else
+{
+    var pageScores = scores.Skip(SkipFor(_currentPage)).Take(PageSizeFor(_currentPage)).ToArray();
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Recorded</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ var rowIndex = 0; }
+            @foreach (var score in pageScores)
+            {
+                var rank = SkipFor(_currentPage) + rowIndex + 1;
+                var rankClass = rank switch
+                {
+                    1 => "rank-gold",
+                    2 => "rank-silver",
+                    3 => "rank-bronze",
+                    _ => ""
+                };
+                var isNew = _newKeys.ContainsKey(score.Key);
+                <tr @key="score.Key" class="@rankClass @(isNew ? "score-new" : "")" style="--i: @rowIndex">
+                    <td class="rank-number">
+                        @rank
+                        @if (isNew)
+                        {
+                            <div class="score-new-beam"></div>
+                            <div class="score-new-sparks"></div>
+                        }
+                    </td>
+                    <td class="name-cell">@if (rank == 1) { <span class="crown">♛</span> }@score.Name@if (rank == 1) { <span class="crown">♛</span> }</td>
+                    <td class="score-cell">@score.Score.ToString("N0")</td>
+                    <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
+                    <td class="recorded-cell text-muted-custom">@score.Timestamp.ToLocalTime().ToString("dddd, h:mm tt")</td>
+                </tr>
+                rowIndex++;
+            }
+        </tbody>
+    </table>
+}
+</div>
+
+<footer>
+    <span class="footer-text">Powered by Sentry</span>
+    @if (scores != null && TotalPages > 1)
+    {
+        <div class="pagination">
+            <button class="page-btn" disabled="@(_currentPage == 0)" @onclick="PreviousPage">Previous Page</button>
+            <span class="page-info">@(_currentPage + 1) / @TotalPages</span>
+            <button class="page-btn" disabled="@(_currentPage >= TotalPages - 1)" @onclick="NextPage">Next Page</button>
+        </div>
+    }
+    <img src="/img/sentry-glyph-light.png" alt="Sentry" />
+</footer>
+
+@if (_offScreenEntries.Count > 0)
+{
+    <div class="offscreen-toast-container">
+        @foreach (var entry in _offScreenEntries)
+        {
+            <div class="offscreen-toast" @key="entry.Entry.Key">
+                <span class="offscreen-toast-rank">#@entry.Rank</span>
+                <span class="offscreen-toast-name">@entry.Entry.Name</span>
+                <span class="offscreen-toast-score">@entry.Entry.Score.ToString("N0")</span>
+            </div>
+        }
+    </div>
+}
 
 @code {
+    private string Api => $"{Configuration["ApiBaseUrl"]}/score";
+
+    private int _firstPageSize = 5;
+    private int _otherPageSize = 5;
+    private int _currentPage = 0;
+    private bool _pageSizeCalculated = false;
+
+    private int PageSizeFor(int page) => page == 0 ? _firstPageSize : _otherPageSize;
+
+    private int SkipFor(int page)
+    {
+        if (page == 0) return 0;
+        return _firstPageSize + (page - 1) * _otherPageSize;
+    }
+
+    private int TotalPages
+    {
+        get
+        {
+            if (scores == null || scores.Length == 0) return 0;
+            if (scores.Length <= _firstPageSize) return 1;
+            return 1 + (int)Math.Ceiling((double)(scores.Length - _firstPageSize) / _otherPageSize);
+        }
+    }
+
+    private record OffScreenEntry(ScoreEntry Entry, int Rank, DateTime AddedAt);
+
     private ScoreEntry[]? scores;
+    private HashSet<Guid> _previousKeys = new();
+    private Dictionary<Guid, DateTime> _newKeys = new();
+    private List<OffScreenEntry> _offScreenEntries = new();
+    private System.Threading.Timer? _refreshTimer;
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO: URL needs to come from config
-        const string api =
-            "https://sentaur-leaderboard-f7z2cjcdzq-uc.a.run.app/score";
-            // "http://localhost:5203/score";
-        scores = await Http.GetFromJsonAsync<ScoreEntry[]>(api);
+        scores = await Http.GetFromJsonAsync<ScoreEntry[]>(Api);
+        if (scores != null)
+        {
+            scores = scores.OrderByDescending(s => s.Score).ToArray();
+            _previousKeys = new HashSet<Guid>(scores.Select(s => s.Key));
+        }
+
+        _refreshTimer = new System.Threading.Timer(async _ =>
+        {
+            await RefreshScores();
+        }, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+    }
+
+    private async Task RefreshScores()
+    {
+        try
+        {
+            var fresh = await Http.GetFromJsonAsync<ScoreEntry[]>(Api);
+            if (fresh != null)
+            {
+                fresh = fresh.OrderByDescending(s => s.Score).ToArray();
+                var now = DateTime.UtcNow;
+
+                var pageStart = SkipFor(_currentPage);
+                var pageEnd = pageStart + PageSizeFor(_currentPage);
+
+                foreach (var key in fresh.Select(s => s.Key).Where(k => !_previousKeys.Contains(k)))
+                {
+                    _newKeys.TryAdd(key, now);
+
+                    var index = Array.FindIndex(fresh, s => s.Key == key);
+                    if (index >= 0 && (index < pageStart || index >= pageEnd))
+                    {
+                        var entry = fresh[index];
+                        _offScreenEntries.Add(new OffScreenEntry(entry, index + 1, now));
+                    }
+                }
+
+                var expired = _newKeys.Where(kv => (now - kv.Value).TotalSeconds > 3.5).Select(kv => kv.Key).ToList();
+                foreach (var key in expired)
+                    _newKeys.Remove(key);
+
+                _offScreenEntries.RemoveAll(e => (now - e.AddedAt).TotalSeconds > 4);
+
+                _previousKeys = new HashSet<Guid>(fresh.Select(s => s.Key));
+                scores = fresh;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch
+        {
+            // Silently ignore refresh failures — booth must stay up
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (_currentPage > 0) _currentPage--;
+    }
+
+    private void NextPage()
+    {
+        if (_currentPage < TotalPages - 1) _currentPage++;
     }
 
     ISpan? _pageLoad;
@@ -55,11 +216,24 @@ else
         base.OnInitialized();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         _pageLoad?.Finish();
         _pageLoad = null;
+
+        if (!_pageSizeCalculated && scores != null)
+        {
+            _pageSizeCalculated = true;
+            var sizes = await JS.InvokeAsync<int[]>("leaderboard.getPageSize");
+            _firstPageSize = sizes[0];
+            _otherPageSize = sizes[1];
+            StateHasChanged();
+        }
     }
 
+    public void Dispose()
+    {
+        _refreshTimer?.Dispose();
+    }
 }

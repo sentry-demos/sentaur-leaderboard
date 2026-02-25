@@ -1,39 +1,5 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-h1:focus {
-    outline: none;
-}
-
-a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
 .content {
-    padding-top: 1.1rem;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid red;
-}
-
-.validation-message {
-    color: red;
+    padding-top: 1.5rem;
 }
 
 #blazor-error-ui {
@@ -98,66 +64,91 @@ a, .btn-link {
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
-code {
-    color: #c02d76;
-}
-/* 
-body {
-    background: #362D59;
-    color: white;
-} */
-
 body {
     --bs-body-bg: #362D59;
     font-family: "Rubik", sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
 }
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.layout > .page {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.layout > .page > main,
+.layout > .page > main > .content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.layout > .page > main > .content > .leaderboard {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   Header (banner + overlaid title)
+   ========================================= */
 
 header {
     position: relative;
+    max-height: 30vh;
+    overflow: hidden;
 }
 
-header img.header {
+.header-bg {
     width: 100%;
-    z-index: -1;
+    display: block;
+    object-fit: cover;
+    max-height: 30vh;
 }
 
-header img.handheld {
+.header-overlay {
     position: absolute;
-    bottom: -60px;
-    right: 40px;
-    width: 211px;
-    height: 112px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 2rem;
+    background: linear-gradient(to top, rgba(54, 45, 89, 1) 0%, rgba(54, 45, 89, 0.85) 50%, transparent 100%);
 }
 
-
-@media (max-width: 768px) {
-    header img.handheld {
-        bottom: -40px;
-        right: 20px;
-        width: 150px;
-        height: 80px;
-    }
-}
-
-@media (min-width: 1024px) {
-    header img.header {
-        margin-top: -100px;
-    }
-
-    header img.handheld {
-        width: 316px;
-        height: 168px;
-        right: 80px;
-    }
-}
+/* =========================================
+   Title & Tagline
+   ========================================= */
 
 h1 {
     color: white;
-    margin-bottom: 2rem;
+    margin-bottom: 0.15rem;
+    font-size: 3.5rem;
+    text-shadow:
+        0 0 10px rgba(200, 50, 150, 0.6),
+        0 0 30px rgba(200, 50, 150, 0.3),
+        0 0 60px rgba(200, 50, 150, 0.15);
 }
 
 h1 span {
-    background-color: #362D59;
+    background-color: transparent;
+}
+
+.tagline {
+    color: #EFB51C;
+    font-size: 2rem;
+    font-style: italic;
+    margin-bottom: 0;
+    letter-spacing: 0.05em;
 }
 
 p.notice {
@@ -183,26 +174,816 @@ p.notice span::before {
     transform: rotate(-2deg);
 }
 
-footer {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    padding: 0 1rem 1rem 2rem;
+/* =========================================
+   Leaderboard Container
+   ========================================= */
+
+.leaderboard {
+    background: rgba(30, 22, 54, 0.85);
+    border-radius: 12px;
+    border: 1px solid rgba(200, 50, 150, 0.25);
+    box-shadow:
+        0 0 15px rgba(200, 50, 150, 0.1),
+        0 0 40px rgba(200, 50, 150, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    overflow: hidden;
 }
+
+/* =========================================
+   Table Styling
+   ========================================= */
+
+.leaderboard table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+.leaderboard thead th {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.5rem 1rem 0.75rem;
+    border: none;
+    text-align: left;
+}
+
+.leaderboard thead th:nth-child(1) {
+    text-align: center;
+    width: 5%;
+}
+
+.leaderboard thead th:nth-child(2) {
+    width: 35%;
+}
+
+.leaderboard thead th:nth-child(3) {
+    width: 20%;
+}
+
+.leaderboard thead th:nth-child(4) {
+    width: 15%;
+}
+
+.leaderboard thead th:nth-child(5) {
+    width: 25%;
+}
+
+.leaderboard tbody tr {
+    border: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    animation: fadeSlideIn 0.4s ease both;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+}
+
+.leaderboard tbody tr:nth-child(odd) {
+    background-color: rgba(54, 45, 89, 0.6);
+}
+
+.leaderboard tbody tr:nth-child(even) {
+    background-color: rgba(46, 37, 80, 0.6);
+}
+
+.leaderboard tbody tr:hover {
+    background-color: rgba(70, 55, 110, 0.8);
+    box-shadow: 0 0 12px rgba(200, 50, 150, 0.15);
+}
+
+.leaderboard tbody td {
+    padding: 0.85rem 1rem;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    vertical-align: middle;
+    line-height: 1.6;
+}
+
+/* =========================================
+   Rank Column
+   ========================================= */
+
+.rank-number {
+    font-weight: 700;
+    font-size: 1.2rem;
+    width: 3rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* =========================================
+   Podium Rows (Top 3)
+   ========================================= */
+
+/* --- 1st Place (Gold) --- */
+
+.rank-gold {
+    border-left: 4px solid #EFB51C !important;
+    background-color: rgba(239, 181, 28, 0.10) !important;
+}
+
+.rank-gold td {
+    padding-top: 1.1rem !important;
+    padding-bottom: 1.1rem !important;
+}
+
+.rank-gold .rank-number {
+    color: #EFB51C;
+    font-size: 2rem;
+}
+
+.rank-gold .name-cell {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.8rem !important;
+}
+
+.rank-gold .score-cell {
+    font-size: 2.2rem !important;
+}
+
+/* --- 2nd Place (Silver) --- */
+
+.rank-silver {
+    border-left: 4px solid #C0C0C0 !important;
+    background-color: rgba(192, 192, 192, 0.06) !important;
+}
+
+.rank-silver td {
+    padding-top: 0.95rem !important;
+    padding-bottom: 0.95rem !important;
+}
+
+.rank-silver .rank-number {
+    color: #C0C0C0;
+    font-size: 1.7rem;
+}
+
+.rank-silver .name-cell {
+    font-size: 1.5rem !important;
+    font-weight: 600;
+}
+
+.rank-silver .score-cell {
+    font-size: 1.8rem !important;
+}
+
+/* --- 3rd Place (Bronze) --- */
+
+.rank-bronze {
+    border-left: 4px solid #CD7F32 !important;
+    background-color: rgba(205, 127, 50, 0.06) !important;
+}
+
+.rank-bronze .rank-number {
+    color: #CD7F32;
+    font-size: 1.5rem;
+}
+
+.rank-bronze .name-cell {
+    font-size: 1.35rem !important;
+    font-weight: 600;
+}
+
+.rank-bronze .score-cell {
+    font-size: 1.6rem !important;
+}
+
+/* =========================================
+   Score Column
+   ========================================= */
+
+.score-cell {
+    font-weight: 700;
+    color: #EFB51C !important;
+    font-size: 1.3rem !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   Name Column
+   ========================================= */
+
+.name-cell {
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.crown {
+    display: inline-block;
+    margin: 0 0.3rem;
+    font-size: 1.6rem;
+    line-height: 1;
+    transform: translateY(-0.15em);
+    color: #EFB51C;
+}
+
+/* =========================================
+   Duration Column
+   ========================================= */
+
+.duration-cell {
+    font-family: "Courier New", Courier, monospace;
+    letter-spacing: 0.05em;
+}
+
+/* =========================================
+   Muted Secondary Text
+   ========================================= */
+
+.text-muted-custom {
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 1.1rem !important;
+}
+
+/* =========================================
+   Stagger-In Animation
+   ========================================= */
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   New Score BOMBASTIC Animation
+   ========================================= */
+
+/* --- Row: entrance bounce + pulsing glow --- */
+
+.score-new {
+    position: relative;
+    z-index: 10;
+    border-left: 4px solid #EFB51C !important;
+    animation:
+        rowFlashIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+        rowGlowPulse 0.5s ease-in-out 0.4s 6 alternate;
+}
+
+@keyframes rowFlashIn {
+    0% {
+        transform: scaleY(1.15) scaleX(0.98);
+        filter: brightness(2.5);
+    }
+    60% {
+        filter: brightness(1.3);
+    }
+    100% {
+        transform: scaleY(1) scaleX(1);
+        filter: brightness(1);
+    }
+}
+
+@keyframes rowGlowPulse {
+    0% {
+        box-shadow:
+            0 0 12px rgba(239, 181, 28, 0.25),
+            0 0 30px rgba(239, 181, 28, 0.1),
+            inset 0 0 12px rgba(239, 181, 28, 0.08);
+    }
+    100% {
+        box-shadow:
+            0 0 25px rgba(239, 181, 28, 0.5),
+            0 0 60px rgba(239, 181, 28, 0.2),
+            inset 0 0 25px rgba(239, 181, 28, 0.15);
+    }
+}
+
+/* --- Cells: golden flash that fades out --- */
+
+.score-new > td {
+    animation: cellFlash 3s ease-out both;
+}
+
+@keyframes cellFlash {
+    0% {
+        background-color: rgba(255, 255, 255, 0.5);
+        text-shadow: 0 0 15px rgba(239, 181, 28, 0.9);
+    }
+    15% {
+        background-color: rgba(239, 181, 28, 0.4);
+    }
+    40% {
+        background-color: rgba(239, 181, 28, 0.15);
+    }
+    60% {
+        text-shadow: 0 0 6px rgba(239, 181, 28, 0.3);
+    }
+    100% {
+        background-color: transparent;
+        text-shadow: none;
+    }
+}
+
+/* --- Anchor: rank cell positions the overlays --- */
+
+.score-new .rank-number {
+    position: relative;
+    overflow: visible;
+}
+
+/* --- Overlay: light beam sweep across entire row --- */
+
+.score-new-beam {
+    position: absolute;
+    top: -5px;
+    bottom: -5px;
+    left: -15vw;
+    width: 15vw;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(239, 181, 28, 0.1) 15%,
+        rgba(255, 255, 255, 0.45) 42%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0.45) 58%,
+        rgba(239, 181, 28, 0.1) 85%,
+        transparent
+    );
+    animation: beamSweepRow 1s ease-in-out both;
+    pointer-events: none;
+    z-index: 20;
+}
+
+@keyframes beamSweepRow {
+    0% {
+        left: -15vw;
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 0.6;
+    }
+    100% {
+        left: 95vw;
+        opacity: 0;
+    }
+}
+
+/* --- Overlay: particle spark cluster across entire row --- */
+
+.score-new-sparks {
+    position: absolute;
+    top: 50%;
+    left: -30px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+        /* Bright core glow */
+        0 0 10px 4px rgba(255, 255, 255, 0.95),
+        0 0 20px 8px rgba(239, 181, 28, 0.5),
+        0 0 40px 12px rgba(239, 181, 28, 0.15),
+        /* Upper scatter */
+        -6px -14px 0 1.5px #EFB51C,
+        -10px -22px 0 0.5px rgba(239, 181, 28, 0.5),
+        5px -18px 0 1.5px #fff,
+        12px -10px 0 1px #f08030,
+        16px -20px 0 0.5px rgba(255, 255, 255, 0.4),
+        -16px -7px 0 1px rgba(255, 255, 255, 0.7),
+        9px -26px 0 0.5px rgba(239, 181, 28, 0.3),
+        -20px -16px 0 1px #EFB51C,
+        /* Lower scatter */
+        -5px 16px 0 1.5px #EFB51C,
+        7px 21px 0 0.5px rgba(255, 255, 255, 0.5),
+        -9px 12px 0 1px #f08030,
+        14px 8px 0 1px #EFB51C,
+        -4px 24px 0 0.5px rgba(239, 181, 28, 0.3),
+        -18px 5px 0 1px #f08030,
+        18px 17px 0 0.5px rgba(239, 181, 28, 0.5),
+        22px -4px 0 1px rgba(255, 255, 255, 0.6);
+    animation: sparkSweepRow 1.1s ease-out both;
+    pointer-events: none;
+    z-index: 21;
+}
+
+@keyframes sparkSweepRow {
+    0% {
+        left: -30px;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.2);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.4);
+    }
+    50% {
+        opacity: 0.9;
+        transform: translateY(-50%) scale(1);
+    }
+    100% {
+        left: 95vw;
+        opacity: 0;
+        transform: translateY(-50%) scale(0.3);
+    }
+}
+
+/* =========================================
+   Pagination
+   ========================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 0 0.25rem;
+}
+
+.page-btn {
+    background: rgba(200, 50, 150, 0.15);
+    border: 1px solid rgba(200, 50, 150, 0.35);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-family: "Rubik", sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: rgba(200, 50, 150, 0.3);
+    border-color: rgba(200, 50, 150, 0.6);
+    box-shadow: 0 0 10px rgba(200, 50, 150, 0.2);
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.page-info {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   Skeleton Loader
+   ========================================= */
+
+.skeleton-row td {
+    padding: 0.85rem 1rem;
+    border: none;
+}
+
+.skeleton-block {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+    height: 1.2rem;
+}
+
+.skeleton-rank {
+    width: 2rem;
+}
+
+.skeleton-name {
+    width: 70%;
+    min-width: 8rem;
+}
+
+.skeleton-score {
+    width: 4rem;
+}
+
+.skeleton-time {
+    width: 3.5rem;
+}
+
+.skeleton-recorded {
+    width: 8rem;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* =========================================
+   Floating Particles
+   ========================================= */
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float linear infinite;
+}
+
+/* Bottom starters */
+.particle:nth-child(1) {
+    width: 6px;
+    height: 6px;
+    background: #e05050;
+    left: 5%;
+    bottom: -10px;
+    animation-duration: 8s;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    width: 5px;
+    height: 5px;
+    background: #f08030;
+    left: 15%;
+    bottom: -10px;
+    animation-duration: 10s;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(3) {
+    width: 7px;
+    height: 7px;
+    background: #e04040;
+    left: 55%;
+    bottom: -10px;
+    animation-duration: 9s;
+    animation-delay: 0.5s;
+}
+
+.particle:nth-child(4) {
+    width: 5px;
+    height: 5px;
+    background: #f06020;
+    left: 85%;
+    bottom: -10px;
+    animation-duration: 11s;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(5) {
+    width: 6px;
+    height: 6px;
+    background: #e05050;
+    left: 35%;
+    bottom: -10px;
+    animation-duration: 8s;
+    animation-delay: 4s;
+}
+
+/* Upper starters (near top of leaderboard, short travel) */
+.particle:nth-child(6) {
+    width: 7px;
+    height: 7px;
+    background: #e04040;
+    left: 8%;
+    bottom: 65%;
+    animation: float-short 12s linear infinite;
+    animation-delay: 3.5s;
+}
+
+.particle:nth-child(7) {
+    width: 5px;
+    height: 5px;
+    background: #f06020;
+    left: 25%;
+    bottom: 60%;
+    animation: float-short 10s linear infinite;
+    animation-delay: 0.8s;
+}
+
+.particle:nth-child(8) {
+    width: 6px;
+    height: 6px;
+    background: #e05050;
+    left: 45%;
+    bottom: 70%;
+    animation: float-short 14s linear infinite;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(9) {
+    width: 4px;
+    height: 4px;
+    background: #f08030;
+    left: 70%;
+    bottom: 60%;
+    animation: float-short 11s linear infinite;
+    animation-delay: 5s;
+}
+
+.particle:nth-child(10) {
+    width: 7px;
+    height: 7px;
+    background: #e04040;
+    left: 90%;
+    bottom: 65%;
+    animation: float-short 13s linear infinite;
+    animation-delay: 1.2s;
+}
+
+.particle:nth-child(11) {
+    width: 5px;
+    height: 5px;
+    background: #f06020;
+    left: 50%;
+    bottom: 55%;
+    animation: float-short 12s linear infinite;
+    animation-delay: 6s;
+}
+
+.particle:nth-child(12) {
+    width: 6px;
+    height: 6px;
+    background: #d05030;
+    left: 35%;
+    bottom: 40%;
+    animation: float 14s linear infinite;
+    animation-delay: 3.5s;
+}
+
+.particle:nth-child(13) {
+    width: 4px;
+    height: 4px;
+    background: #c04828;
+    left: 75%;
+    bottom: 70%;
+    animation: float-short 11s linear infinite;
+    animation-delay: 8s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+@keyframes float-short {
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-40vh);
+        opacity: 0;
+    }
+}
+
+/* =========================================
+   Footer
+   ========================================= */
+
+footer {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 1rem 0.25rem 2rem;
+    flex-shrink: 0;
+}
+
+footer .footer-text {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+footer .pagination {
+    flex: 1;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
 footer img {
-    width: 125px;
-    justify-self: end;
-    align-self: center;
+    width: 80px;
 }
 
 footer p {
-    /* vertical align bottom */
     align-self: center;
     font-size: 0.8rem;
 }
 
-@media (max-width: 768px) {
-    footer img {
-        width: 80px;
+/* =========================================
+   Off-Screen New Score Toast
+   ========================================= */
+
+.offscreen-toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+}
+
+.offscreen-toast {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(30, 22, 54, 0.95);
+    border: 1px solid rgba(239, 181, 28, 0.5);
+    border-left: 4px solid #EFB51C;
+    border-radius: 8px;
+    box-shadow:
+        0 0 20px rgba(239, 181, 28, 0.3),
+        0 0 50px rgba(239, 181, 28, 0.1);
+    animation: toastSlideUp 4s ease both;
+    white-space: nowrap;
+}
+
+.offscreen-toast-rank {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 2.5rem;
+}
+
+.offscreen-toast-name {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.offscreen-toast-score {
+    color: #EFB51C;
+    font-weight: 700;
+    font-size: 1.3rem;
+    font-variant-numeric: tabular-nums;
+}
+
+@keyframes toastSlideUp {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    8% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    12% {
+        box-shadow:
+            0 0 30px rgba(239, 181, 28, 0.5),
+            0 0 60px rgba(239, 181, 28, 0.2);
+    }
+    70% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(30%);
+        opacity: 0;
     }
 }
