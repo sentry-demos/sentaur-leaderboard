@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Sentaur.Leaderboard;
 using Sentaur.Leaderboard.Api;
 
@@ -28,18 +28,11 @@ builder.Services
             In = ParameterLocation.Header,
             Description = "JSON Web Token based security",
         });
-        o.AddSecurityRequirement(new OpenApiSecurityRequirement
+        o.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
+                new OpenApiSecuritySchemeReference("Bearer"),
+                new List<string>()
             }
         });
     })
@@ -119,7 +112,7 @@ app.MapGet("/score", [AllowAnonymous] (LeaderboardContext context, CancellationT
         .ToListAsync(token);
 })
 .WithName("scores")
-.WithOpenApi();
+;
 
 app.MapPost("/score", [Authorize] async (ScoreEntry scoreEntry, LeaderboardContext context, CancellationToken token) =>
 {
@@ -159,7 +152,7 @@ app.MapGet("/lottery", [Authorize] async (LeaderboardContext context, Cancellati
         return winner;
     })
     .WithName("lottery")
-    .WithOpenApi();
+    ;
 
 
 app.MapGet("/lottery/entries", [Authorize] (LeaderboardContext context, CancellationToken token) =>
@@ -167,7 +160,7 @@ app.MapGet("/lottery/entries", [Authorize] (LeaderboardContext context, Cancella
         return LotteryEntries(context, token);
     })
     .WithName("lottery-entries")
-    .WithOpenApi();
+    ;
 
 app.MapGet("/throw", (string? text) =>
 {
