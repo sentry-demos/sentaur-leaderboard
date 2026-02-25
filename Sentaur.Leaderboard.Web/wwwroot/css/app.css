@@ -107,6 +107,7 @@ header {
     position: relative;
     max-height: 30vh;
     overflow: hidden;
+    user-select: none;
 }
 
 .header-bg {
