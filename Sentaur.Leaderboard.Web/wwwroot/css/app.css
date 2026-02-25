@@ -179,6 +179,7 @@ p.notice span::before {
    ========================================= */
 
 .leaderboard {
+    --row-h: 3.5rem;
     background: rgba(30, 22, 54, 0.85);
     border-radius: 12px;
     border: 1px solid rgba(200, 50, 150, 0.25);
@@ -236,6 +237,7 @@ p.notice span::before {
 }
 
 .leaderboard tbody tr {
+    height: var(--row-h);
     border: none;
     border-left: 3px solid transparent;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
@@ -284,13 +286,9 @@ p.notice span::before {
 /* --- 1st Place (Gold) --- */
 
 .rank-gold {
+    height: calc(var(--row-h) * 1.5) !important;
     border-left: 4px solid #EFB51C !important;
     background-color: rgba(239, 181, 28, 0.10) !important;
-}
-
-.rank-gold td {
-    padding-top: 1.1rem !important;
-    padding-bottom: 1.1rem !important;
 }
 
 .rank-gold .rank-number {
@@ -311,13 +309,9 @@ p.notice span::before {
 /* --- 2nd Place (Silver) --- */
 
 .rank-silver {
+    height: calc(var(--row-h) * 1.3) !important;
     border-left: 4px solid #C0C0C0 !important;
     background-color: rgba(192, 192, 192, 0.06) !important;
-}
-
-.rank-silver td {
-    padding-top: 0.95rem !important;
-    padding-bottom: 0.95rem !important;
 }
 
 .rank-silver .rank-number {
@@ -337,6 +331,7 @@ p.notice span::before {
 /* --- 3rd Place (Bronze) --- */
 
 .rank-bronze {
+    height: calc(var(--row-h) * 1.2) !important;
     border-left: 4px solid #CD7F32 !important;
     background-color: rgba(205, 127, 50, 0.06) !important;
 }
@@ -602,8 +597,8 @@ p.notice span::before {
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
-    margin-top: 1rem;
     padding: 0.75rem 0 0.25rem;
+    flex-shrink: 0;
 }
 
 .page-btn {
@@ -881,35 +876,37 @@ p.notice span::before {
    ========================================= */
 
 footer {
+    position: relative;
     margin-top: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.25rem 1rem 0.25rem 2rem;
+    justify-content: center;
+    padding: 0.15rem 1rem;
     flex-shrink: 0;
+}
+
+footer .pagination {
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+footer .footer-brand {
+    position: absolute;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 footer .footer-text {
     color: rgba(255, 255, 255, 0.35);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     letter-spacing: 0.04em;
     white-space: nowrap;
 }
 
-footer .pagination {
-    flex: 1;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-}
-
 footer img {
-    width: 80px;
-}
-
-footer p {
-    align-self: center;
-    font-size: 0.8rem;
+    width: 36px;
 }
 
 /* =========================================

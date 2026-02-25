@@ -82,7 +82,6 @@ else
 </div>
 
 <footer>
-    <span class="footer-text">Powered by Sentry</span>
     @if (scores != null && TotalPages > 1)
     {
         <div class="pagination">
@@ -91,7 +90,10 @@ else
             <button class="page-btn" disabled="@(_currentPage >= TotalPages - 1)" @onclick="NextPage">Next Page</button>
         </div>
     }
-    <img src="/img/sentry-glyph-light.png" alt="Sentry" />
+    <div class="footer-brand">
+        <img src="/img/sentry-glyph-light.png" alt="Sentry" />
+        <span class="footer-text">Powered by Sentry</span>
+    </div>
 </footer>
 
 @if (_offScreenEntries.Count > 0)
