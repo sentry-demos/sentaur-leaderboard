@@ -114,6 +114,23 @@ app.MapGet("/score", [AllowAnonymous] (LeaderboardContext context, CancellationT
 .WithName("scores")
 ;
 
+app.MapGet("/latest", [AllowAnonymous] (LeaderboardContext context, CancellationToken token) =>
+{
+    return context.ScoreEntries
+        .OrderByDescending(p => p.Timestamp)
+        .Select(p => new {
+            p.Key,
+            p.Name,
+            p.Score,
+            p.Duration,
+            p.Timestamp
+        })
+        .ToListAsync(token);
+})
+.WithName("latest")
+.WithOpenApi()
+;
+
 app.MapPost("/score", [Authorize] async (ScoreEntry scoreEntry, LeaderboardContext context, CancellationToken token) =>
 {
     context.ScoreEntries.Add(scoreEntry);

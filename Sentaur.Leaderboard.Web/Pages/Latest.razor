@@ -1,0 +1,146 @@
+@page "/latest"
+@implements IDisposable
+@inject HttpClient Http
+@inject IConfiguration Configuration
+
+<PageTitle>Latest Scores</PageTitle>
+
+<div class="leaderboard latest-view">
+@if (scores == null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Recorded</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < 8; i++)
+            {
+                <tr class="skeleton-row">
+                    <td><div class="skeleton-block skeleton-name"></div></td>
+                    <td><div class="skeleton-block skeleton-score"></div></td>
+                    <td><div class="skeleton-block skeleton-time"></div></td>
+                    <td><div class="skeleton-block skeleton-recorded"></div></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="latest-scroll-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                    <th>Recorded</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var rowIndex = 0; }
+                @foreach (var score in scores)
+                {
+                    var isNew = _newKeys.ContainsKey(score.Key);
+                    <tr @key="score.Key" class="@(isNew ? "score-new" : "")" style="--i: @rowIndex">
+                        <td class="name-cell">@score.Name</td>
+                        <td class="score-cell">@score.Score.ToString("N0")</td>
+                        <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
+                        <td class="recorded-cell text-muted-custom">@FormatRelativeTime(score.Timestamp)</td>
+                    </tr>
+                    rowIndex++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+</div>
+
+<footer>
+    <div class="footer-brand">
+        <img src="/img/sentry-glyph-light.png" alt="Sentry" />
+        <span class="footer-text">Powered by Sentry</span>
+    </div>
+</footer>
+
+@code {
+    private string Api => $"{Configuration["ApiBaseUrl"]}/latest";
+
+    private ScoreEntry[]? scores;
+    private HashSet<Guid> _previousKeys = new();
+    private Dictionary<Guid, DateTime> _newKeys = new();
+    private System.Threading.Timer? _refreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scores = await Http.GetFromJsonAsync<ScoreEntry[]>(Api);
+        if (scores != null)
+        {
+            _previousKeys = new HashSet<Guid>(scores.Select(s => s.Key));
+        }
+
+        _refreshTimer = new System.Threading.Timer(async _ =>
+        {
+            await RefreshScores();
+        }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+    }
+
+    private async Task RefreshScores()
+    {
+        try
+        {
+            var fresh = await Http.GetFromJsonAsync<ScoreEntry[]>(Api);
+            if (fresh != null)
+            {
+                var now = DateTime.UtcNow;
+
+                foreach (var key in fresh.Select(s => s.Key).Where(k => !_previousKeys.Contains(k)))
+                {
+                    _newKeys.TryAdd(key, now);
+                }
+
+                var expired = _newKeys.Where(kv => (now - kv.Value).TotalSeconds > 3.5).Select(kv => kv.Key).ToList();
+                foreach (var key in expired)
+                    _newKeys.Remove(key);
+
+                _previousKeys = new HashSet<Guid>(fresh.Select(s => s.Key));
+                scores = fresh;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch
+        {
+            // Silently ignore refresh failures
+        }
+    }
+
+    private static string FormatRelativeTime(DateTimeOffset timestamp)
+    {
+        var elapsed = DateTimeOffset.UtcNow - timestamp;
+
+        if (elapsed.TotalSeconds < 60)
+            return "just now";
+        if (elapsed.TotalMinutes < 60)
+        {
+            var mins = (int)elapsed.TotalMinutes;
+            return $"{mins} min ago";
+        }
+        if (elapsed.TotalHours < 24)
+        {
+            var hours = (int)elapsed.TotalHours;
+            return $"{hours}h ago";
+        }
+
+        return timestamp.ToLocalTime().ToString("MMM d, h:mm tt");
+    }
+
+    public void Dispose()
+    {
+        _refreshTimer?.Dispose();
+    }
+}

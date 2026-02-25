@@ -984,3 +984,29 @@ footer img {
         opacity: 0;
     }
 }
+
+/* =========================================
+   Latest View — column widths & scroll
+   ========================================= */
+
+.latest-view thead th:nth-child(1) {
+    text-align: left;
+    width: 25%;
+}
+
+.latest-view thead th:nth-child(2) {
+    width: 25%;
+}
+
+.latest-view thead th:nth-child(3) {
+    width: 25%;
+}
+
+.latest-view thead th:nth-child(4) {
+    width: 25%;
+}
+
+.latest-scroll-container {
+    overflow-y: auto;
+    max-height: calc(100vh - 14rem);
+}
