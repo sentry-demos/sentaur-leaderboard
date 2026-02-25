@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Sentaur Survivors Leaderboard — a .NET 9.0 demo application (Sentry integration showcase) with a game leaderboard, JWT auth, and lottery system. Built for conference demos (GDC 2025).
+Sentaur Survivors Leaderboard — a .NET 10.0 demo application (Sentry integration showcase) with a game leaderboard, JWT auth, and lottery system. Built for conference demos (GDC 2025).
 
 ## Architecture
 
@@ -41,7 +41,7 @@ dotnet ef database update --project Sentaur.Leaderboard.Api
 
 ## Local Development Setup
 
-Requires .NET 9.0 SDK and the WASM workload (`dotnet workload install wasm-tools`). The API needs a local PostgreSQL instance — connection details are in `Sentaur.Leaderboard.Api/appsettings.Development.json`.
+Requires .NET 10.0 SDK and the WASM workload (`dotnet workload install wasm-tools`). The API needs a local PostgreSQL instance — connection details are in `Sentaur.Leaderboard.Api/appsettings.Development.json`.
 
 ## Key Files
 
@@ -66,7 +66,7 @@ Requires .NET 9.0 SDK and the WASM workload (`dotnet workload install wasm-tools
 
 - **API**: Docker → Google Cloud Run (via `cloudbuild.yaml`)
 - **Web**: GitHub Actions → GitHub Pages (via `.github/workflows/dotnet-build.yml`)
-- CI builds run on ubuntu-22.04, windows-latest, and macos-latest
+- CI builds run on ubuntu-latest, windows-latest, and macos-latest
 
 ## Sentry Integration
 
