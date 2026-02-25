@@ -28,10 +28,10 @@ builder.Services
             In = ParameterLocation.Header,
             Description = "JSON Web Token based security",
         });
-        o.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+        o.AddSecurityRequirement(document => new OpenApiSecurityRequirement
         {
             {
-                new OpenApiSecuritySchemeReference("Bearer"),
+                new OpenApiSecuritySchemeReference("Bearer", document),
                 new List<string>()
             }
         });

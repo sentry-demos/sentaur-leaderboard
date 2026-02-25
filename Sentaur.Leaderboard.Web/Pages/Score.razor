@@ -218,9 +218,8 @@ else
         base.OnInitialized();
     }
 
-    protected override async void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
         _pageLoad?.Finish();
         _pageLoad = null;
 
