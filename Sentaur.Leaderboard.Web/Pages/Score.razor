@@ -72,7 +72,7 @@ else
                     <td class="name-cell">@if (rank == 1) { <span class="crown">♛</span> }@score.Name@if (rank == 1) { <span class="crown">♛</span> }</td>
                     <td class="score-cell">@score.Score.ToString("N0")</td>
                     <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
-                    <td class="recorded-cell text-muted-custom">@score.Timestamp.ToLocalTime().ToString("dddd, h:mm tt")</td>
+                    <td class="recorded-cell text-muted-custom">@score.Timestamp.ToLocalTime().ToString("MMM d, h:mm tt")</td>
                 </tr>
                 rowIndex++;
             }
