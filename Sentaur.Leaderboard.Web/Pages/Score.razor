@@ -16,6 +16,7 @@
                 <th>Name</th>
                 <th>Score</th>
                 <th>Time</th>
+                <th>Platform</th>
                 <th>Recorded</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                     <td><div class="skeleton-block skeleton-name"></div></td>
                     <td><div class="skeleton-block skeleton-score"></div></td>
                     <td><div class="skeleton-block skeleton-time"></div></td>
+                    <td><div class="skeleton-block skeleton-platform"></div></td>
                     <td><div class="skeleton-block skeleton-recorded"></div></td>
                 </tr>
             }
@@ -36,7 +38,6 @@
 else
 {
     var pageScores = scores.Skip(SkipFor(_currentPage)).Take(PageSizeFor(_currentPage)).ToArray();
-
     <table>
         <thead>
             <tr>
@@ -44,6 +45,7 @@ else
                 <th>Name</th>
                 <th>Score</th>
                 <th>Time</th>
+                <th>Platform</th>
                 <th>Recorded</th>
             </tr>
         </thead>
@@ -72,6 +74,12 @@ else
                     <td class="name-cell">@if (rank == 1) { <span class="crown">♛</span> }@score.Name@if (rank == 1) { <span class="crown">♛</span> }</td>
                     <td class="score-cell">@score.Score.ToString("N0")</td>
                     <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
+                    <td class="platform-cell">
+                        @if (score.Platform != null)
+                        {
+                            <img class="platform-icon platform-icon-@(score.Platform.ToLowerInvariant())" src="/img/@(score.Platform.ToLowerInvariant())-logo.svg" alt="@score.Platform" />
+                        }
+                    </td>
                     <td class="recorded-cell text-muted-custom">@score.Timestamp.ToLocalTime().ToString("MMM d, h:mm tt")</td>
                 </tr>
                 rowIndex++;

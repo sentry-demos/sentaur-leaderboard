@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sentaur.Leaderboard.Api;
@@ -11,9 +12,11 @@ using Sentaur.Leaderboard.Api;
 namespace Sentaur.Leaderboard.Api.Migrations
 {
     [DbContext(typeof(LeaderboardContext))]
-    partial class LeaderboardContextModelSnapshot : ModelSnapshot
+    [Migration("20260306100632_AddPlatform")]
+    partial class AddPlatform
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

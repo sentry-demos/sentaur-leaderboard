@@ -136,6 +136,12 @@ header *:focus {
     background: linear-gradient(to top, rgba(54, 45, 89, 1) 0%, rgba(54, 45, 89, 0.85) 50%, transparent 100%);
 }
 
+.header-overlay-inner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
 /* =========================================
    Title & Tagline
    ========================================= */
@@ -232,11 +238,11 @@ p.notice span::before {
 }
 
 .leaderboard thead th:nth-child(2) {
-    width: 35%;
+    width: 25%;
 }
 
 .leaderboard thead th:nth-child(3) {
-    width: 20%;
+    width: 18%;
 }
 
 .leaderboard thead th:nth-child(4) {
@@ -244,7 +250,11 @@ p.notice span::before {
 }
 
 .leaderboard thead th:nth-child(5) {
-    width: 25%;
+    width: 18%;
+}
+
+.leaderboard thead th:nth-child(6) {
+    width: 19%;
 }
 
 .leaderboard tbody tr {
@@ -597,6 +607,197 @@ p.notice span::before {
         opacity: 0;
         transform: translateY(-50%) scale(0.3);
     }
+}
+
+/* =========================================
+   Platform Donut Chart (header overlay)
+   ========================================= */
+
+.platform-chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+}
+
+.platform-chart-title {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.platform-chart-overlay {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(20, 14, 40, 0.7);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+        0 0 20px rgba(200, 50, 150, 0.15),
+        0 0 40px rgba(200, 50, 150, 0.08);
+    animation: chartPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes chartPulse {
+    0% {
+        box-shadow:
+            0 0 20px rgba(200, 50, 150, 0.15),
+            0 0 40px rgba(200, 50, 150, 0.08);
+    }
+    100% {
+        box-shadow:
+            0 0 30px rgba(200, 50, 150, 0.3),
+            0 0 60px rgba(200, 50, 150, 0.15);
+    }
+}
+
+.platform-donut {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    filter: saturate(1.2) brightness(1.1);
+    box-shadow:
+        0 0 10px 2px rgba(139, 111, 192, 0.4),
+        0 0 25px 5px rgba(201, 96, 122, 0.2),
+        0 0 40px 8px rgba(76, 175, 154, 0.1);
+    animation: donut-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes donut-glow-pulse {
+    0%, 100% {
+        box-shadow:
+            0 0 10px 2px rgba(139, 111, 192, 0.4),
+            0 0 25px 5px rgba(201, 96, 122, 0.2),
+            0 0 40px 8px rgba(76, 175, 154, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 0 18px 4px rgba(139, 111, 192, 0.6),
+            0 0 35px 8px rgba(201, 96, 122, 0.35),
+            0 0 55px 14px rgba(76, 175, 154, 0.2);
+    }
+}
+
+.platform-donut-hole {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #1e1636;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.platform-donut-total {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.platform-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+}
+
+.legend-logo-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    flex-shrink: 0;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-logo {
+    height: auto;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1);
+    opacity: 0.85;
+    object-fit: contain;
+    display: block;
+}
+
+.legend-logo-xbox {
+    width: 2.2rem;
+}
+
+.legend-logo-ps {
+    width: 2.6rem;
+}
+
+.legend-logo-switch {
+    width: 2.5rem;
+}
+
+.legend-val {
+    color: #EFB51C;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-left: 0.25rem;
+}
+
+/* =========================================
+   Platform Badge
+   ========================================= */
+
+.platform-cell {
+    font-size: 0.95rem !important;
+}
+
+.platform-icon {
+    display: inline-block;
+    vertical-align: middle;
+    height: 1.4rem;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.85;
+    object-fit: contain;
+}
+
+.platform-icon-xbox {
+    height: 1.3rem;
+}
+
+.platform-icon-playstation {
+    height: 1.1rem;
+}
+
+.platform-icon-switch {
+    height: 1.4rem;
+}
+
+/* =========================================
+   Skeleton Platform
+   ========================================= */
+
+.skeleton-platform {
+    width: 5rem;
 }
 
 /* =========================================
@@ -1010,13 +1211,17 @@ footer img {
 }
 
 .latest-view thead th:nth-child(2) {
-    width: 25%;
+    width: 20%;
 }
 
 .latest-view thead th:nth-child(3) {
-    width: 25%;
+    width: 15%;
 }
 
 .latest-view thead th:nth-child(4) {
+    width: 15%;
+}
+
+.latest-view thead th:nth-child(5) {
     width: 25%;
 }

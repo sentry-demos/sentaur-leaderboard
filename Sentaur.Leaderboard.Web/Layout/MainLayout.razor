@@ -1,5 +1,8 @@
 @inherits LayoutComponentBase
+@implements IDisposable
 @inject NavigationManager Nav
+@inject HttpClient Http
+@inject IConfiguration Configuration
 <div class="layout">
     <div class="particles">
         <div class="particle"></div>
@@ -19,8 +22,30 @@
     <header>
         <img class="header-bg" src="/img/header-wide.webp" alt="" />
         <div class="header-overlay">
-            <h1><span>Sentaur Survivors</span></h1>
-            <p class="tagline">@(Nav.Uri.Contains("/latest") ? "Latest" : "Highscores")</p>
+            <div class="header-overlay-inner">
+                <div>
+                    <h1><span>Sentaur Survivors</span></h1>
+                    <p class="tagline">@(Nav.Uri.Contains("/latest") ? "Latest" : "Highscores")</p>
+                </div>
+                @if (_chartTotal > 0)
+                {
+                    <div class="platform-chart-wrapper">
+                        <div class="platform-chart-overlay">
+                            <div class="platform-donut" style="background: @_chartGradient;">
+                                <div class="platform-donut-hole">
+                                    <span class="platform-donut-total">@_chartTotal</span>
+                                </div>
+                            </div>
+                            <!-- Console logos: Wikimedia Commons, PD-textlogo. Trademarks of respective owners. -->
+                            <div class="platform-chart-legend">
+                                <div class="legend-row"><span class="legend-logo-wrap"><img class="legend-logo legend-logo-xbox" src="/img/xbox-logo.svg" alt="Xbox" /></span><span class="legend-val">@_xboxCount</span></div>
+                                <div class="legend-row"><span class="legend-logo-wrap"><img class="legend-logo legend-logo-ps" src="/img/playstation-logo.svg" alt="PlayStation" /></span><span class="legend-val">@_psCount</span></div>
+                                <div class="legend-row"><span class="legend-logo-wrap"><img class="legend-logo legend-logo-switch" src="/img/switch-logo.svg" alt="Switch" /></span><span class="legend-val">@_switchCount</span></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </header>
     <div class="page">
@@ -31,3 +56,40 @@
         </main>
     </div>
 </div>
+
+@code {
+    private string Api => $"{Configuration["ApiBaseUrl"]}/score";
+    private int _xboxCount, _psCount, _switchCount, _chartTotal;
+    private string _chartGradient = "";
+    private System.Threading.Timer? _chartTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshChart();
+        _chartTimer = new System.Threading.Timer(async _ => await RefreshChart(), null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3));
+    }
+
+    private async Task RefreshChart()
+    {
+        try
+        {
+            var scores = await Http.GetFromJsonAsync<Sentaur.Leaderboard.ScoreEntry[]>(Api);
+            if (scores == null) return;
+            var top50 = scores.OrderByDescending(s => s.Score).Take(50);
+            _xboxCount = top50.Count(s => s.Platform == "Xbox");
+            _psCount = top50.Count(s => s.Platform == "PlayStation");
+            _switchCount = top50.Count(s => s.Platform == "Switch");
+            _chartTotal = _xboxCount + _psCount + _switchCount;
+            if (_chartTotal > 0)
+            {
+                var xboxEnd = ((double)_xboxCount / _chartTotal * 100).ToString("F1");
+                var psEnd = (((double)_xboxCount + _psCount) * 100.0 / _chartTotal).ToString("F1");
+                _chartGradient = $"conic-gradient(#1db977 0% {xboxEnd}%, #7b2ff2 {xboxEnd}% {psEnd}%, #e0335c {psEnd}% 100%)";
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+        catch { }
+    }
+
+    public void Dispose() => _chartTimer?.Dispose();
+}

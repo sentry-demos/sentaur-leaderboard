@@ -107,7 +107,8 @@ app.MapGet("/score", [AllowAnonymous] (LeaderboardContext context, CancellationT
             p.Name,
             p.Score,
             p.Duration,
-            p.Timestamp
+            p.Timestamp,
+            p.Platform
         })
         .ToListAsync(token);
 })
@@ -123,7 +124,8 @@ app.MapGet("/latest", [AllowAnonymous] (LeaderboardContext context, Cancellation
             p.Name,
             p.Score,
             p.Duration,
-            p.Timestamp
+            p.Timestamp,
+            p.Platform
         })
         .ToListAsync(token);
 })

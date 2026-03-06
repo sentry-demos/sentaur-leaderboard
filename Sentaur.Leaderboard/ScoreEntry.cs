@@ -1,3 +1,3 @@
 ﻿namespace Sentaur.Leaderboard;
 
-public record ScoreEntry(Guid Key, string Name, string Email, TimeSpan Duration, int Score, DateTimeOffset Timestamp);
+public record ScoreEntry(Guid Key, string Name, string Email, TimeSpan Duration, int Score, DateTimeOffset Timestamp, string? Platform = null);
