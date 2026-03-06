@@ -1225,3 +1225,159 @@ footer img {
 .latest-view thead th:nth-child(5) {
     width: 25%;
 }
+
+/* =========================================
+   Mobile Responsive
+   ========================================= */
+
+@media (max-width: 768px) {
+    /* --- Header --- */
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .tagline {
+        font-size: 1.2rem;
+    }
+
+    .header-overlay {
+        padding: 0.5rem 1rem;
+    }
+
+    .header-overlay-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    /* Hide platform chart on small screens */
+    .platform-chart-wrapper {
+        display: none;
+    }
+
+    /* --- Leaderboard --- */
+    .leaderboard {
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .leaderboard thead th {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.5rem;
+        letter-spacing: 0.06em;
+    }
+
+    .leaderboard tbody td {
+        padding: 0.5rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Hide Time and Recorded columns on mobile */
+    .leaderboard thead th:nth-child(4),
+    .leaderboard tbody td:nth-child(4),
+    .leaderboard thead th:nth-child(6),
+    .leaderboard tbody td:nth-child(6) {
+        display: none;
+    }
+
+    /* Adjust column widths for mobile (Rank, Name, Score, Platform visible) */
+    .leaderboard thead th:nth-child(1) { width: 10%; }
+    .leaderboard thead th:nth-child(2) { width: 40%; }
+    .leaderboard thead th:nth-child(3) { width: 25%; }
+    .leaderboard thead th:nth-child(5) { width: 25%; }
+
+    /* Podium scaling */
+    .rank-gold .name-cell { font-size: 1.2rem !important; }
+    .rank-gold .score-cell { font-size: 1.5rem !important; }
+    .rank-gold .rank-number { font-size: 1.4rem; }
+
+    .rank-silver .name-cell { font-size: 1.1rem !important; }
+    .rank-silver .score-cell { font-size: 1.3rem !important; }
+    .rank-silver .rank-number { font-size: 1.2rem; }
+
+    .rank-bronze .name-cell { font-size: 1rem !important; }
+    .rank-bronze .score-cell { font-size: 1.2rem !important; }
+    .rank-bronze .rank-number { font-size: 1.1rem; }
+
+    .score-cell { font-size: 1rem !important; }
+    .name-cell { font-size: 0.95rem; }
+    .rank-number { font-size: 1rem; width: 2rem; }
+
+    /* --- Latest view: hide Time and Platform columns --- */
+    .latest-view thead th:nth-child(3),
+    .latest-view tbody td:nth-child(3),
+    .latest-view thead th:nth-child(4),
+    .latest-view tbody td:nth-child(4) {
+        display: none;
+    }
+
+    .latest-view thead th:nth-child(1) { width: 35%; }
+    .latest-view thead th:nth-child(2) { width: 30%; }
+    .latest-view thead th:nth-child(5) { width: 35%; }
+
+    /* --- Footer --- */
+    footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    footer .footer-brand {
+        position: static;
+    }
+
+    /* --- Pagination --- */
+    .pagination {
+        gap: 0.75rem;
+    }
+
+    .page-btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    /* --- Toast --- */
+    .offscreen-toast {
+        padding: 0.5rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .offscreen-toast-name { font-size: 1rem; }
+    .offscreen-toast-score { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .tagline {
+        font-size: 1rem;
+    }
+
+    header {
+        max-height: 20vh;
+    }
+
+    .header-bg {
+        max-height: 20vh;
+    }
+
+    /* Also hide Platform column on very small screens */
+    .leaderboard thead th:nth-child(5),
+    .leaderboard tbody td:nth-child(5) {
+        display: none;
+    }
+
+    .leaderboard thead th:nth-child(2) { width: 50%; }
+    .leaderboard thead th:nth-child(3) { width: 40%; }
+
+    /* Latest view: show only Name, Score, Recorded */
+    .latest-view thead th:nth-child(1) { width: 40%; }
+    .latest-view thead th:nth-child(2) { width: 30%; }
+    .latest-view thead th:nth-child(5) { width: 30%; }
+
+    .crown {
+        font-size: 1.1rem;
+    }
+}
