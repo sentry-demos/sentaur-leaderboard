@@ -21,7 +21,7 @@
                 <th>Name</th>
                 <th>Score</th>
                 <th>Time</th>
-                <th>Platform</th>
+                @if (showPlatforms) { <th>Platform</th> }
                 <th>Recorded</th>
             </tr>
         </thead>
@@ -32,7 +32,7 @@
                     <td><div class="skeleton-block skeleton-name"></div></td>
                     <td><div class="skeleton-block skeleton-score"></div></td>
                     <td><div class="skeleton-block skeleton-time"></div></td>
-                    <td><div class="skeleton-block skeleton-platform"></div></td>
+                    @if (showPlatforms) { <td><div class="skeleton-block skeleton-platform"></div></td> }
                     <td><div class="skeleton-block skeleton-recorded"></div></td>
                 </tr>
             }
@@ -47,7 +47,7 @@ else
                 <th>Name</th>
                 <th>Score</th>
                 <th>Time</th>
-                <th>Platform</th>
+                @if (showPlatforms) { <th>Platform</th> }
                 <th>Recorded</th>
             </tr>
         </thead>
@@ -60,12 +60,15 @@ else
                     <td class="name-cell">@score.Name</td>
                     <td class="score-cell">@score.Score.ToString("N0")</td>
                     <td class="duration-cell text-muted-custom">@score.Duration.ToString(@"mm\:ss")</td>
-                    <td class="platform-cell">
-                        @if (score.Platform != null)
-                        {
-                            <img class="platform-icon platform-icon-@(score.Platform.ToLowerInvariant())" src="/img/@(score.Platform.ToLowerInvariant())-logo.svg" alt="@score.Platform" />
-                        }
-                    </td>
+                    @if (showPlatforms)
+                    {
+                        <td class="platform-cell">
+                            @if (score.Platform != null)
+                            {
+                                <img class="platform-icon platform-icon-@(score.Platform.ToLowerInvariant())" src="/img/@(score.Platform.ToLowerInvariant())-logo.svg" alt="@score.Platform" />
+                            }
+                        </td>
+                    }
                     <td class="recorded-cell text-muted-custom">@FormatRelativeTime(score.Timestamp)</td>
                 </tr>
                 rowIndex++;
@@ -84,6 +87,7 @@ else
 
 @code {
     private string Api => $"{Configuration["ApiBaseUrl"]}/latest";
+    private bool showPlatforms => Configuration.GetValue<bool>("ShowPlatforms");
 
     private ScoreEntry[]? scores;
     private HashSet<Guid> _previousKeys = new();

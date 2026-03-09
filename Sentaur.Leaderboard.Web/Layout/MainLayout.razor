@@ -27,7 +27,7 @@
                     <h1><span>Sentaur Survivors</span></h1>
                     <p class="tagline">@(Nav.Uri.Contains("/latest") ? "Latest" : "Highscores")</p>
                 </div>
-                @if (_chartTotal > 0)
+                @if (showPlatforms && _chartTotal > 0)
                 {
                     <div class="platform-chart-wrapper">
                         <div class="platform-chart-overlay">
@@ -59,12 +59,14 @@
 
 @code {
     private string Api => $"{Configuration["ApiBaseUrl"]}/score";
+    private bool showPlatforms => Configuration.GetValue<bool>("ShowPlatforms");
     private int _xboxCount, _psCount, _switchCount, _chartTotal;
     private string _chartGradient = "";
     private System.Threading.Timer? _chartTimer;
 
     protected override async Task OnInitializedAsync()
     {
+        if (!showPlatforms) return;
         await RefreshChart();
         _chartTimer = new System.Threading.Timer(async _ => await RefreshChart(), null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3));
     }
